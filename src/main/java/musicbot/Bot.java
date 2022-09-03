@@ -1,5 +1,7 @@
 package musicbot;
 
+import musicbot.Commands.other.HelpCommand;
+import musicbot.Commands.other.PingCommand;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -20,10 +22,10 @@ public class Bot {
 //                        GatewayIntent.GUILD_MEMBERS
                 )
                 .enableCache(CacheFlag.VOICE_STATE)
-//                .addEventListeners(
-//                        new Listener(),
-//                        new HelpCommand(),
-//                        new PingCommand())
+                .addEventListeners(
+                        new Listener(),
+                        new HelpCommand(),
+                        new PingCommand())
                 .setActivity(Activity.listening("dj!help - komendy"))
                 .build();
     }
