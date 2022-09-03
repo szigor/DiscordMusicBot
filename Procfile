@@ -1,1 +1,1 @@
-worker: java -jar build/libs/app-all.jar
+worker: java -jar build/libs/MusicBot-all.jar

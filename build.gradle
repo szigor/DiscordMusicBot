@@ -34,6 +34,6 @@ build.mustRunAfter test
 
 jar {
     manifest{
-        attributes 'Class-Path': '/libs/app-all.jar', 'Main-Class': 'musicbot.Bot'
+        attributes 'Class-Path': '/libs/MusicBot-all.jar', 'Main-Class': 'musicbot.Bot'
     }
 }
