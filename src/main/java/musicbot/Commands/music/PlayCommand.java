@@ -46,8 +46,11 @@ public class PlayCommand implements ICommand {
     }
 
     private void join(TextChannel channel, AudioManager audioManager, AudioChannel memberChannel) {
+        String link = "https://www.youtube.com/watch?v=-53WqO6bUyY";
+
         audioManager.openAudioConnection(memberChannel);
         channel.sendMessage("Wbijam szefie").queue();
+        PlayerManager.getInstance().loadAndPlay(channel, link);
     }
 
     private void play(TextChannel channel, CommandContext ctx) {

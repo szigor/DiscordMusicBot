@@ -48,7 +48,7 @@ public class PlayerManager {
                 musicManager.scheduler.queue(track);
 
                 final String joinTrack = "https://www.youtube.com/watch?v=-53WqO6bUyY";
-                final String dcTrack = "https://www.youtube.com/watch?v=bu_rZGEhrMc";
+                final String dcTrack = "https://www.youtube.com/watch?v=mnCUqMB88Ww";
 
                 if (!trackUrl.equals(joinTrack) && !trackUrl.equals(dcTrack)) {
                     channel.sendMessage("Dodaje do kolejki: `")
@@ -92,12 +92,12 @@ public class PlayerManager {
 
             @Override
             public void noMatches() {
-
+                System.out.println("No matches ~PlayerManager.java");
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
-
+                System.out.println("Load failed ~PlayerManager.java");
             }
         });
     }

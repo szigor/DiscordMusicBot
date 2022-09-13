@@ -17,11 +17,11 @@ public class Bot {
                         System.getenv("TOKEN"),
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_VOICE_STATES,
-                        GatewayIntent.MESSAGE_CONTENT
-//                        GatewayIntent.GUILD_PRESENCES,
-//                        GatewayIntent.GUILD_MEMBERS
+                        GatewayIntent.MESSAGE_CONTENT,
+                        GatewayIntent.GUILD_PRESENCES,
+                        GatewayIntent.GUILD_MEMBERS
                 )
-                .enableCache(CacheFlag.VOICE_STATE)
+//                .enableCache(CacheFlag.VOICE_STATE)
                 .addEventListeners(
                         new Listener(),
                         new HelpCommand(),

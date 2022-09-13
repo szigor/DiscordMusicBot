@@ -48,7 +48,7 @@ public class DisconnectCommand implements ICommand {
 
         channel.sendMessage("Nara, ja spadam").queue();
 
-        PlayerManager.getInstance().loadAndPlay(channel, "https://www.youtube.com/watch?v=bu_rZGEhrMc");
+        PlayerManager.getInstance().loadAndPlay(channel, "https://www.youtube.com/watch?v=mnCUqMB88Ww");
         try {
             Thread.sleep(4000);
         } catch (InterruptedException e) {
