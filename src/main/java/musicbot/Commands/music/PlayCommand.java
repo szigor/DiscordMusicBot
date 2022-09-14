@@ -2,6 +2,7 @@ package musicbot.Commands.music;
 
 import musicbot.Commands.CommandContext;
 import musicbot.Commands.ICommand;
+import musicbot.LavaPlayer.GuildMusicManager;
 import musicbot.LavaPlayer.PlayerManager;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -26,6 +27,8 @@ public class PlayCommand implements ICommand {
         final AudioManager audioManager = ctx.getGuild().getAudioManager(); //join
         final AudioChannel memberChannel = memberVoiceState.getChannel(); //join - kanal osoby ktora pisze
 
+        final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+
         if (memberVoiceState.inAudioChannel()) {
             if (ctx.getArgs().isEmpty()) {
                 channel.sendMessage("Podaj frazę lub link do utworu po `!play`").queue();
@@ -33,11 +36,13 @@ public class PlayCommand implements ICommand {
             }
             if (selfVoiceState.inAudioChannel()) {
                 //gra
-                play(channel, ctx);
+                ctx.getEvent().getMessage().delete().queue();
+                play(channel, ctx, member);
             } else {
                 //dolacza i gra
-                join(channel, audioManager, memberChannel);
-                play(channel, ctx);
+                ctx.getEvent().getMessage().delete().queue();
+                join(channel, audioManager, memberChannel, member, musicManager);
+                play(channel, ctx, member);
             }
 
         } else {
@@ -45,22 +50,23 @@ public class PlayCommand implements ICommand {
         }
     }
 
-    private void join(TextChannel channel, AudioManager audioManager, AudioChannel memberChannel) {
+    private void join(TextChannel channel, AudioManager audioManager, AudioChannel memberChannel, Member member, GuildMusicManager musicManager) {
         String link = "https://www.youtube.com/watch?v=-53WqO6bUyY";
 
+        musicManager.scheduler.player.stopTrack();
+        musicManager.scheduler.queue.clear();
         audioManager.openAudioConnection(memberChannel);
-        channel.sendMessage("Wbijam szefie").queue();
-        PlayerManager.getInstance().loadAndPlay(channel, link);
+        PlayerManager.getInstance().loadAndPlay(channel, link, member);
     }
 
-    private void play(TextChannel channel, CommandContext ctx) {
+    private void play(TextChannel channel, CommandContext ctx, Member member) {
         String link = String.join(" ", ctx.getArgs());
 
         if (!isUrl(link)) {
             link = "ytsearch:" + link;
         }
 
-        PlayerManager.getInstance().loadAndPlay(channel, link);
+        PlayerManager.getInstance().loadAndPlay(channel, link, member);
     }
 
     private boolean isUrl(String url) {

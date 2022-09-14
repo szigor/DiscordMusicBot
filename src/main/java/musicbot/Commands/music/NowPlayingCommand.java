@@ -7,6 +7,7 @@ import musicbot.Commands.CommandContext;
 import musicbot.Commands.ICommand;
 import musicbot.LavaPlayer.GuildMusicManager;
 import musicbot.LavaPlayer.PlayerManager;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -46,9 +47,16 @@ public class NowPlayingCommand implements ICommand {
             return;
         }
 
-        final AudioTrackInfo info = track.getInfo();
+        ctx.getEvent().getMessage().delete().queue();
 
-        channel.sendMessageFormat("Teraz leci `%s` od `%s`",info.title, info.author).queue();
+        EmbedBuilder embed = new EmbedBuilder()
+                .setColor(0xC2DDC0)
+                .setAuthor(" Teraz leci", member.getAvatarUrl(), member.getEffectiveAvatarUrl())
+                .appendDescription("`" + track.getInfo().title)
+                .appendDescription("` od `")
+                .appendDescription(track.getInfo().author + "`");
+
+        channel.sendMessageEmbeds(embed.build()).queue();
     }
 
     @Override

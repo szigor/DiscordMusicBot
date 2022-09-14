@@ -6,6 +6,8 @@ import musicbot.Commands.CommandContext;
 import musicbot.Commands.ICommand;
 import musicbot.LavaPlayer.GuildMusicManager;
 import musicbot.LavaPlayer.PlayerManager;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
@@ -23,6 +25,8 @@ public class QueueCommand implements ICommand {
 
         final BlockingQueue<AudioTrack> queue = musicManager.scheduler.queue;
 
+        final Member member = ctx.getEvent().getMember();
+
         if (queue.isEmpty()) {
             channel.sendMessage("Kolejka jest pusta").queue();
             channel.sendMessage("Jak twój łeb xdd").queue();
@@ -32,34 +36,39 @@ public class QueueCommand implements ICommand {
         final int trackCount = Math.min(queue.size(), 20);
         final List<AudioTrack> trackList = new ArrayList<>(queue);
 
+        ctx.getEvent().getMessage().delete().queue();
 
         final MessageCreateAction messageAction = channel.sendMessage("**Bieżąca kolejka**\n");
         messageAction.addContent("\n");
+
+        EmbedBuilder embed = new EmbedBuilder()
+                .setColor(0xC2DDC0)
+                .setAuthor(" Bieżąca kolejka", member.getAvatarUrl(), member.getEffectiveAvatarUrl());
 
         for (int i = 0; i < trackCount; i++) {
             final AudioTrack track = trackList.get(i);
             final AudioTrackInfo info = track.getInfo();
 
-            messageAction
-                    .addContent("`#`")
-                    .addContent(String.valueOf(i + 1))
-                    .addContent(" `")
-                    .addContent(info.title)
-                    .addContent(" od ")
-                    .addContent(info.author)
-                    .addContent("` [`")
-                    .addContent(formatTime(track.getDuration()))
-                    .addContent("`]\n");
+            embed
+                    .appendDescription("`#")
+                    .appendDescription(String.valueOf(i + 1))
+                    .appendDescription("` `")
+                    .appendDescription(info.title)
+                    .appendDescription(" od ")
+                    .appendDescription(info.author)
+                    .appendDescription("` - `")
+                    .appendDescription(formatTime(track.getDuration()))
+                    .appendDescription("`\n");
         }
 
         if (trackList.size() > trackCount) {
-            messageAction
-                    .addContent("i jeszcze `")
-                    .addContent(String.valueOf(trackList.size() - trackCount))
-                    .addContent("` innych...");
+            embed
+                    .appendDescription("i jeszcze `")
+                    .appendDescription(String.valueOf(trackList.size() - trackCount))
+                    .appendDescription("` innych...");
         }
 
-        messageAction.queue();
+        channel.sendMessageEmbeds(embed.build()).queue();
 
     }
 
@@ -68,7 +77,11 @@ public class QueueCommand implements ICommand {
         final long minutes = timeInMillis / TimeUnit.MINUTES.toMillis(1);
         final long seconds = timeInMillis % TimeUnit.MINUTES.toMillis(1) / TimeUnit.SECONDS.toMillis(1);
 
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        if (hours != 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        } else {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
     }
 
     @Override

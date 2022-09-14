@@ -43,14 +43,15 @@ public class DisconnectCommand implements ICommand {
         musicManager.scheduler.looping = false;
         musicManager.scheduler.queue.clear();
         musicManager.audioPlayer.stopTrack();
+        ctx.getEvent().getMessage().delete().queue();
 
         final AudioManager audioManager = guild.getAudioManager();
 
-        channel.sendMessage("Nara, ja spadam").queue();
+//        channel.sendMessage("Nara, ja spadam").queue();
 
-        PlayerManager.getInstance().loadAndPlay(channel, "https://www.youtube.com/watch?v=mnCUqMB88Ww");
+        PlayerManager.getInstance().loadAndPlay(channel, "https://www.youtube.com/watch?v=mnCUqMB88Ww", member);
         try {
-            Thread.sleep(4000);
+            Thread.sleep(4500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

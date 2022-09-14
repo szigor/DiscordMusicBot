@@ -7,12 +7,16 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerManager {
 
@@ -39,7 +43,7 @@ public class PlayerManager {
         });
     }
 
-    public void loadAndPlay(TextChannel channel, String trackUrl) {
+    public void loadAndPlay(TextChannel channel, String trackUrl, Member member) {
         final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
         this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
@@ -51,12 +55,16 @@ public class PlayerManager {
                 final String dcTrack = "https://www.youtube.com/watch?v=mnCUqMB88Ww";
 
                 if (!trackUrl.equals(joinTrack) && !trackUrl.equals(dcTrack)) {
-                    channel.sendMessage("Dodaje do kolejki: `")
-                            .addContent(track.getInfo().title)
-                            .addContent("` od `")
-                            .addContent(track.getInfo().author)
-                            .addContent("`")
-                            .queue();
+
+                    EmbedBuilder embed = new EmbedBuilder()
+                            .setColor(0xC2DDC0)
+                            .setAuthor(" Dodaje do kolejki", member.getAvatarUrl(), member.getEffectiveAvatarUrl())
+                            .appendDescription("`" + track.getInfo().title)
+                            .appendDescription("` od `")
+                            .appendDescription(track.getInfo().author + "` - `")
+                            .appendDescription(formatTime(track.getDuration()) + "`");
+
+                    channel.sendMessageEmbeds(embed.build()).queue();
                 }
 
             }
@@ -68,19 +76,27 @@ public class PlayerManager {
                 if (trackUrl.contains("ytsearch:")) {
                     AudioTrack track = tracks.get(0);
                     musicManager.scheduler.queue(track);
-                    channel.sendMessage("Dodaje do kolejki: `")
-                            .addContent(track.getInfo().title)
-                            .addContent("` od `")
-                            .addContent(track.getInfo().author)
-                            .addContent("`")
-                            .queue();
+
+                    EmbedBuilder embed = new EmbedBuilder()
+                            .setColor(0xC2DDC0)
+                            .setAuthor(" Dodaje do kolejki", member.getAvatarUrl(), member.getEffectiveAvatarUrl())
+                            .appendDescription("`" + track.getInfo().title)
+                            .appendDescription("` od `")
+                            .appendDescription(track.getInfo().author + "` - `")
+                            .appendDescription(formatTime(track.getDuration()) + "`");
+
+                    channel.sendMessageEmbeds(embed.build()).queue();
+
                 } else {
-                    channel.sendMessage("Dodaje do kolejki `")
-                            .addContent(String.valueOf(tracks.size()))
-                            .addContent("` tracków z playlisty: `")
-                            .addContent(playlist.getName())
-                            .addContent("`")
-                            .queue();
+
+                    EmbedBuilder embed = new EmbedBuilder()
+                            .setColor(0xC2DDC0)
+                            .setAuthor(" Dodaje do kolejki", member.getAvatarUrl(), member.getEffectiveAvatarUrl())
+                            .appendDescription("`" + tracks.size())
+                            .appendDescription("` tracków z playlisty `")
+                            .appendDescription(playlist.getName() +  "`");
+
+                    channel.sendMessageEmbeds(embed.build()).queue();
 
                     for (final AudioTrack track : tracks) {
                         musicManager.scheduler.queue(track);
@@ -108,5 +124,18 @@ public class PlayerManager {
         }
 
         return INSTANCE;
+    }
+
+    private String formatTime(long timeInMillis) {
+        final long hours = timeInMillis / TimeUnit.HOURS.toMillis(1);
+        final long minutes = timeInMillis / TimeUnit.MINUTES.toMillis(1);
+        final long seconds = timeInMillis % TimeUnit.MINUTES.toMillis(1) / TimeUnit.SECONDS.toMillis(1);
+
+        if (hours != 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        } else {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
+
     }
 }
