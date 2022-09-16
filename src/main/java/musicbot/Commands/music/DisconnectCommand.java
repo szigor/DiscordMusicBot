@@ -18,45 +18,35 @@ public class DisconnectCommand implements ICommand {
         final Member self = ctx.getGuild().getSelfMember();
         final GuildVoiceState selfVoiceState = self.getVoiceState();
 
-        if (!selfVoiceState.inAudioChannel()) {
-            channel.sendMessage("Musisz być w kanale żebym wyszedł").queue();
-            return;
-        }
-
         final Member member = ctx.getEvent().getMember();
-        final GuildVoiceState memberVoiceState = member.getVoiceState();
-
-        if (!memberVoiceState.inAudioChannel()) {
-            channel.sendMessage("Musisz być w kanale żebym wyszedł").queue();
-            return;
-        }
-
-        if (!memberVoiceState.getChannel().equals(selfVoiceState.getChannel())) {
-            channel.sendMessage("Musimy być w tym samym kanale").queue();
-            return;
-        }
 
         final Guild guild = ctx.getGuild();
 
         final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(guild);
 
-        musicManager.scheduler.looping = false;
-        musicManager.scheduler.queue.clear();
-        musicManager.audioPlayer.stopTrack();
-        ctx.getEvent().getMessage().delete().queue();
-
         final AudioManager audioManager = guild.getAudioManager();
 
-//        channel.sendMessage("Nara, ja spadam").queue();
+        if (selfVoiceState.inAudioChannel()) {
 
-        PlayerManager.getInstance().loadAndPlay(channel, "https://www.youtube.com/watch?v=mnCUqMB88Ww", member);
-        try {
-            Thread.sleep(4500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            ctx.getEvent().getMessage().delete().queue();
+
+            musicManager.scheduler.looping = false;
+            musicManager.scheduler.queue.clear();
+            musicManager.audioPlayer.stopTrack();
+
+            PlayerManager.getInstance().loadAndPlay(channel, "https://www.youtube.com/watch?v=mnCUqMB88Ww", member);
+
+            try {
+                Thread.sleep(4500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            audioManager.closeAudioConnection(); //dc
+
+        } else {
+            ctx.getEvent().getMessage().delete().queue();
         }
-
-        audioManager.closeAudioConnection(); //dc
 
     }
 

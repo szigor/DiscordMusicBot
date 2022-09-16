@@ -31,7 +31,7 @@ public class PlayCommand implements ICommand {
 
         if (memberVoiceState.inAudioChannel()) {
             if (ctx.getArgs().isEmpty()) {
-                channel.sendMessage("Podaj frazę lub link do utworu po `!play`").queue();
+                ctx.getEvent().getMessage().reply("Podaj frazę lub link do utworu po `!play`").queue();
                 return;
             }
             if (selfVoiceState.inAudioChannel()) {
@@ -46,7 +46,7 @@ public class PlayCommand implements ICommand {
             }
 
         } else {
-            channel.sendMessage("Musisz być w kanale żebym coś puścił").queue();
+            ctx.getEvent().getMessage().reply("Musisz być w kanale żebym coś puścił").queue();
         }
     }
 

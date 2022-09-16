@@ -4,6 +4,7 @@ import musicbot.Commands.CommandContext;
 import musicbot.Commands.ICommand;
 import musicbot.LavaPlayer.GuildMusicManager;
 import musicbot.LavaPlayer.PlayerManager;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -16,30 +17,30 @@ public class LoopCommand implements ICommand {
         final Member self = ctx.getGuild().getSelfMember();
         final GuildVoiceState selfVoiceState = self.getVoiceState();
 
-        if (!selfVoiceState.inAudioChannel()) {
-            channel.sendMessage("Musisz być w kanale żebym zloopował :unamused:").queue();
-            return;
-        }
-
         final Member member = ctx.getEvent().getMember();
-        final GuildVoiceState memberVoiceState = member.getVoiceState();
-
-        if (!memberVoiceState.inAudioChannel()) {
-            channel.sendMessage("Musisz być w kanale żebym zloopował :unamused:").queue();
-            return;
-        }
-
-        if (!memberVoiceState.getChannel().equals(selfVoiceState.getChannel())) {
-            channel.sendMessage("Jak mam ci coś zloopować jak nie jesteśmy w tym samym kanale ??").queue();
-            return;
-        }
 
         final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
         final boolean newLooping = !musicManager.scheduler.looping;
 
-        musicManager.scheduler.looping = newLooping;
+        EmbedBuilder looped = new EmbedBuilder()
+                .setColor(0xC2DDC0)
+                .setAuthor(" Włącza pętle", member.getAvatarUrl(), member.getEffectiveAvatarUrl());
 
-        channel.sendMessageFormat("Teraz leci **%s**", newLooping ? "w kółko" : "raz a porządnie").queue();
+        EmbedBuilder unlooped = new EmbedBuilder()
+                .setColor(0xC2DDC0)
+                .setAuthor(" Wyłącza pętle", member.getAvatarUrl(), member.getEffectiveAvatarUrl());
+
+        if (selfVoiceState.inAudioChannel()) {
+
+            ctx.getEvent().getMessage().delete().queue();
+
+            musicManager.scheduler.looping = newLooping;
+
+            channel.sendMessageEmbeds(newLooping ? looped.build() : unlooped.build()).queue();
+
+        } else {
+            ctx.getEvent().getMessage().delete().queue();
+        }
 
     }
 

@@ -2,7 +2,6 @@ package musicbot.Commands.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import musicbot.Commands.CommandContext;
 import musicbot.Commands.ICommand;
 import musicbot.LavaPlayer.GuildMusicManager;
@@ -20,43 +19,33 @@ public class NowPlayingCommand implements ICommand {
         final Member self = ctx.getGuild().getSelfMember();
         final GuildVoiceState selfVoiceState = self.getVoiceState();
 
-        if (!selfVoiceState.inAudioChannel()) {
-            channel.sendMessage("Musisz być w kanale").queue();
-            return;
-        }
-
         final Member member = ctx.getEvent().getMember();
-        final GuildVoiceState memberVoiceState = member.getVoiceState();
-
-        if (!memberVoiceState.inAudioChannel()) {
-            channel.sendMessage("Musisz być w kanale").queue();
-            return;
-        }
-
-        if (!memberVoiceState.getChannel().equals(selfVoiceState.getChannel())) {
-            channel.sendMessage("Musisz być w kanale gdzie ja").queue();
-            return;
-        }
 
         final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
         final AudioPlayer audioPlayer = musicManager.audioPlayer;
         final AudioTrack track = audioPlayer.getPlayingTrack();
 
-        if (track == null) {
-            channel.sendMessage("Nic przecież nie leci").queue();
-            return;
-        }
+        EmbedBuilder embed = new EmbedBuilder();
 
-        ctx.getEvent().getMessage().delete().queue();
-
-        EmbedBuilder embed = new EmbedBuilder()
+        embed
                 .setColor(0xC2DDC0)
-                .setAuthor(" Teraz leci", member.getAvatarUrl(), member.getEffectiveAvatarUrl())
-                .appendDescription("`" + track.getInfo().title)
-                .appendDescription("` od `")
-                .appendDescription(track.getInfo().author + "`");
+                .setAuthor(" Teraz leci", member.getAvatarUrl(), member.getEffectiveAvatarUrl());
+//                .appendDescription("`" + track.getInfo().title)
+//                .appendDescription("` od `")
+//                .appendDescription(track.getInfo().author + "`")
+//                .addField("Link", track.getInfo().uri, true);
 
-        channel.sendMessageEmbeds(embed.build()).queue();
+        if (selfVoiceState.inAudioChannel()) {
+            if (track != null) {
+                ctx.getEvent().getMessage().delete().queue();
+//                channel.sendMessageEmbeds(embed.build()).queue();
+                channel.sendMessage(track.getInfo().uri).queue();
+            } else {
+                ctx.getEvent().getMessage().reply("Nic nie leci").queue();
+            }
+        } else {
+            ctx.getEvent().getMessage().delete().queue();
+        }
     }
 
     @Override
