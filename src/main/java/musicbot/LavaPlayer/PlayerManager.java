@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +98,8 @@ public class PlayerManager {
                             .appendDescription(playlist.getName() +  "`");
 
                     channel.sendMessageEmbeds(embed.build()).queue();
+                    
+                    Collections.shuffle(tracks);
 
                     for (final AudioTrack track : tracks) {
                         musicManager.scheduler.queue(track);
