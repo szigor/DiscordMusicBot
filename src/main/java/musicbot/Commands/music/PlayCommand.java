@@ -4,10 +4,10 @@ import musicbot.Commands.CommandContext;
 import musicbot.Commands.ICommand;
 import musicbot.LavaPlayer.GuildMusicManager;
 import musicbot.LavaPlayer.PlayerManager;
-import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.net.URL;
