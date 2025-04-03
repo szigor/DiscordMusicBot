@@ -1,5 +1,6 @@
 package musicbot;
 
+import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import musicbot.Commands.other.HelpCommand;
 import musicbot.Commands.other.PingCommand;
 import net.dv8tion.jda.api.JDABuilder;
@@ -27,6 +28,7 @@ public class Bot {
                         new HelpCommand(),
                         new PingCommand())
                 .setActivity(Activity.listening("dj!help - komendy"))
+                .setAudioSendFactory(new NativeAudioSendFactory())
                 .build();
     }
 

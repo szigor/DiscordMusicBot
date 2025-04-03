@@ -30,6 +30,8 @@ dependencies {
     implementation 'dev.arbjerg:lavaplayer:2.2.3'
     implementation 'dev.lavalink.youtube:common:1.12.0'
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+    implementation 'club.minnced:udpqueue-native-linux-x86-64:0.2.9' // adds linux 64bit
+    implementation 'club.minnced:udpqueue-native-win-x86-64:0.2.9' // adds windows 64bit
 }
 
 task stage(dependsOn: ['build','shadowJar', 'clean', 'test'])

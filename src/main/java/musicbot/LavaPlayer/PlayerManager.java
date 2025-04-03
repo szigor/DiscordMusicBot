@@ -7,12 +7,12 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +29,10 @@ public class PlayerManager {
     public PlayerManager() {
         this.musicManagers = new HashMap<>();
         this.audioPlayerManager = new DefaultAudioPlayerManager();
+        YoutubeAudioSourceManager ytSourceManager = new YoutubeAudioSourceManager(true);
+        audioPlayerManager.registerSourceManager(ytSourceManager);
 
-        AudioSourceManagers.registerRemoteSources(this.audioPlayerManager);
+        AudioSourceManagers.registerRemoteSources(this.audioPlayerManager, YoutubeAudioSourceManager.class);
         AudioSourceManagers.registerLocalSource(this.audioPlayerManager);
     }
 
@@ -53,7 +55,7 @@ public class PlayerManager {
                 musicManager.scheduler.queue(track);
 
                 final String joinTrack = "https://www.youtube.com/watch?v=-53WqO6bUyY";
-                final String dcTrack = "https://www.youtube.com/watch?v=mnCUqMB88Ww";
+                final String dcTrack = "https://www.youtube.com/watch?v=JS4wtEen2EM";
 
                 if (!trackUrl.equals(joinTrack) && !trackUrl.equals(dcTrack)) {
 

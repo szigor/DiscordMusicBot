@@ -34,7 +34,7 @@ public class DisconnectCommand implements ICommand {
             musicManager.scheduler.queue.clear();
             musicManager.audioPlayer.stopTrack();
 
-            PlayerManager.getInstance().loadAndPlay(channel, "https://www.youtube.com/watch?v=mnCUqMB88Ww", member);
+            PlayerManager.getInstance().loadAndPlay(channel, "https://www.youtube.com/watch?v=JS4wtEen2EM", member);
 
             try {
                 Thread.sleep(4500);
